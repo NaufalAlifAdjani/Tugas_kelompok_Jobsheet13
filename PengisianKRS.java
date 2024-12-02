@@ -23,8 +23,10 @@ public class PengisianKRS {
                         tambahDataKRS();
                         break;
                     case 2:
+                        tampilkanKRS();
                         break;
                     case 3:
+                        // analisisSKS();
                         break;
                     case 4:
                         System.out.println("Keluar dari program.");
@@ -91,6 +93,70 @@ public class PengisianKRS {
             System.out.println("Pengisian KRS selesai.");
         }        
 
+    static void tampilkanKRS() {
+        System.out.print("Masukkan NIM: ");
+        String nim = scanner.nextLine();
+        int totalSKS = 0;
+        boolean ditemukan = false;
+
+        System.out.println("\nKRS Mahasiswa dengan NIM: " + nim);
+        for (int i = 0; i < jumlahData; i++) {
+            if (dataKRS[i][1].equalsIgnoreCase(nim)) {
+                System.out.println("Kode Matkul: " + dataKRS[i][2] + ", Nama Matkul: " + dataKRS[i][3] +
+                        ", SKS: " + dataKRS[i][4]);
+                totalSKS += Integer.parseInt(dataKRS[i][4]);
+                ditemukan = true;
+            }
+        }
+
+        if (!ditemukan) {
+            System.out.println("Data KRS tidak ditemukan.");
+        } else {
+            System.out.println("Total SKS: " + totalSKS);
+        }
+    }
+
+    static void analisisSKS() {
+        if (jumlahData == 0) {
+            System.out.println("Belum ada data KRS yang ditambahkan.");
+            return;
+        }
+    
+        System.out.println("\n--- Analisis Data KRS ---");
+        String[] mahasiswaSKS = new String[MAX_DATA];
+        int jumlahMahasiswa = 0;
+    
+        for (int i = 0; i < jumlahData; i++) {
+            String nim = dataKRS[i][1];
+            if (hitungTotalSKS(nim) < 20 && !sudahTercatat(mahasiswaSKS, nim, jumlahMahasiswa)) {
+                mahasiswaSKS[jumlahMahasiswa] = nim;
+                jumlahMahasiswa++;
+            }
+        }
+    
+        if (jumlahMahasiswa == 0) {
+            System.out.println("Tidak ada mahasiswa dengan total SKS kurang dari 20.");
+        } else {
+            System.out.println("Jumlah mahasiswa dengan SKS kurang dari 20: " + jumlahMahasiswa);
+            System.out.println("\nData Mahasiswa dengan SKS Kurang dari 20:");
+            System.out.printf("%-15s %-15s %-15s %-30s %-5s\n", "Nama", "NIM", "Kode Matkul", "Nama Matkul", "SKS");
+            for (int i = 0; i < jumlahMahasiswa; i++) {
+                String nim = mahasiswaSKS[i];
+                for (int j = 0; j < jumlahData; j++) {
+                    if (dataKRS[j][1].equalsIgnoreCase(nim)) {
+                        System.out.printf("%-15s %-15s %-15s %-30s %-5s\n",
+                                dataKRS[j][0], // Nama
+                                dataKRS[j][1], // NIM
+                                dataKRS[j][2], // Kode Matkul
+                                dataKRS[j][3], // Nama Matkul
+                                dataKRS[j][4]  // SKS
+                        );
+                    }
+                }
+            }
+        }
+    }
+
     static int hitungTotalSKS(String nim) {
         int total = 0;
         for (int i = 0; i < jumlahData; i++) {
@@ -99,6 +165,15 @@ public class PengisianKRS {
             }
         }
         return total;
+    }
+
+        static boolean sudahTercatat(String[] mahasiswaSKS, String nim, int jumlahMahasiswa) {
+        for (int i = 0; i < jumlahMahasiswa; i++) {
+            if (mahasiswaSKS[i].equalsIgnoreCase(nim)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
